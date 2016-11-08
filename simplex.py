@@ -97,10 +97,10 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
 
         for i in range(0, m):
             baseCost[i] = c[baseIndex[i]]
-            print '\nc_B[', baseIndex[i], '] = ', baseCost[i]
+            print 'c_B[', baseIndex[i], '] = ', baseCost[i]
 
         choosenJ = -1
-        choosenCost = -sys.maxsize
+        choosenCost = sys.maxsize
 
         for j in nonBaseIndex:
             print column(A, j)
@@ -122,23 +122,48 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
             for i in range(0, m):
                 print 'd_B[', baseIndex[i], '] = ', direction[i]
 
-            # If no index was found with reduced cost, we have a optimun
-            if choosenJ == -1:
-                # Show the optimun solution, just for debug
-                objectiveValue = 0
-                for i in range(0, m):
-                    objectiveValue += (baseCost[i] * x[i])
+        # If no index was found with reduced cost, we have a optimun
+        if choosenJ == -1:
+            # Show the optimun solution, just for debug
+            objectiveValue = 0
+            for i in range(0, m):
+                objectiveValue += (baseCost[i] * x[i])
 
-                print '\nObjective = ', objectiveValue, ' (found on iteration nº ', iteration, ')'
-                solution = numpy.zeros(n)
+            print '\nObjective = ', objectiveValue, ' (found on iteration nº ', iteration, ')'
+            solution = numpy.zeros(n)
 
-                for i in range(0, m):
-                    solution[baseIndex[i]] = x[i]
+            for i in range(0, m):
+                solution[baseIndex[i]] = x[i]
 
-                for i in range(0, n):
-                    print 'x[', i, ']', solution[i]
+            for i in range(0, n):
+                print 'x[', i, ']', solution[i]
 
-            print 'Put variable on base: x[', choosenJ, ']'
+            return x
+
+        print '\nPut variable on base: x[', choosenJ, ']'
+
+        ##############################################################
+        #
+        # Step 3: Computer vector u
+        #
+        ##############################################################
+
+        # We don't have a optimun solution yet. Some basic variable must get out of
+        # the base and give his place for one non basic variable. Compute u to verify
+        # if the solution is unlimited
+        u = numpy.dot(inversedB, column(A, choosenJ))
+
+        # Check if no one of the components of u is positive
+        positiveExists = False
+
+        for i in range(0, m):
+            if u[i] > 0:
+                positiveExists = True
+
+        if not positiveExists:
+            print '\nOptimun cost = -infinite'
+            return numpy.repeat(sys.maxsize, n)
+
         break
 
 
