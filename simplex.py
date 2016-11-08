@@ -1,5 +1,4 @@
 # coding=utf-8
-import math
 import numpy
 
 
@@ -41,32 +40,46 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     """
     while True:
         #
-        # Step 1: calculate initial SBF
+        # Step 1: calculate initial Feasible basic solution
         #
 
         # Print basic and non basic index of current iteration (debug)
-        print('\nIteration # %s' % iteration)
+        print '\nIteration # ', iteration
 
-        print '\n\tBasic index:',
+        print '\nBasic index:',
         for i in baseIndex:
-            print(' %s' % i),
+            print ' ', i,
 
-        print '\n\tNon basic index:',
+        print '\nNon basic index:',
         for i in nonBaseIndex:
-            print(' %s' % i),
+            print ' ', i,
 
         # Create a blank matrix B with m x m dimensions
         B = numpy.zeros((m, m))
 
-        print
-        print
-
+        print '\n'
         # Copy the columns that form the initial base
         for j in range(0, m):
             B[:, j] = column(A, baseIndex[j])
 
         # Print the base B just for debug
-        print B
+        print 'Base: ', B
+
+        # Calculate the initial Feasible basic solution by inverse of B * b
+        inversedB = numpy.linalg.inv(B)
+        x = numpy.dot(inversedB, b)
+
+        print '\nInversed base: ', inversedB
+
+        print '\nFeasible basic solution interation: ', iteration,
+        print x
+
+        objective = 0
+
+        for i in range(1, m):
+            objective += c[baseIndex[i]] * x[i]
+
+        print '\nObjective: ', objective
 
         break
 
@@ -74,6 +87,7 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
 def column(matrix, index):
     """
     Return the requested column of a matrix
+
     :param matrix:
     :param index:
     :return:
