@@ -160,9 +160,33 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
             if u[i] > 0:
                 positiveExists = True
 
+        # Test. If doesn't have no one positive value on vector u, it's because
+        # the optimun value is -infinite
         if not positiveExists:
             print '\nOptimun cost = -infinite'
             return numpy.repeat(sys.maxsize, n)
+
+        ##############################################################
+        #
+        # Step 4: Determinate the value of theta
+        #
+        ##############################################################
+
+        # Kick a high value for theta, and it decreases according to the reason x_i / u_i
+        theta = sys.maxsize
+        indexL = -1
+
+        for i in range(0, m):
+            if u[i] > 0:
+                # Calculate the rason
+                reason = x[i] / u[i]
+
+                # Update the reason, because we find a lower value of theta
+                if reason < theta:
+                    theta = reason
+                    indexL = baseIndex[i]
+
+        print '\nRemove variable of base: x[', indexL, '], theta = ', theta
 
         break
 
