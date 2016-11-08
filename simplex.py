@@ -20,8 +20,13 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     """
     iteration = 0
 
-    print A
+    print 'A',
+    print numpy.asmatrix(A)
+
+    print 'b',
     print b
+
+    print 'c',
     print c
 
     # Print the title of problem
@@ -50,13 +55,35 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         for i in nonBaseIndex:
             print(' %s' % i),
 
-        # Create a matrix m x m
-        B = numpy.zeros((m, m)).tolist()
+        # Create a blank matrix B with m x m dimensions
+        B = numpy.zeros((m, m))
+
+        print
+        print
+
+        # Copy the columns that form the initial base
+        for j in range(0, m):
+            B[:, j] = column(A, baseIndex[j])
+
+        # Print the base B just for debug
+        print B
+
         break
 
 
+def column(matrix, index):
+    """
+    Return the requested column of a matrix
+    :param matrix:
+    :param index:
+    :return:
+    """
+    return [row[index] for row in matrix]
+
+
 if __name__ == '__main__':
-    A = numpy.zeros((3, 5)).tolist()
-    b = [4, 6, 8]
+    # Create a matrix for the problem
+    A = [[1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [3, 2, 0, 0, 1]]
+    b = [4, 6, 18]
     c = [-3, -5, 0, 0, 0]
-    simplex(A, b, c, [3, 2, 5], [1, 4], 3, 5, 'Teste')
+    simplex(A, b, c, [2, 1, 4], [0, 3], 3, 5, 'Goldbarg (pag 104)')
