@@ -46,14 +46,14 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         #
         ##############################################################
 
-        # Print basic and non basic index of current iteration (debug)
+        # Print basic and non-basic index of current iteration (debug)
         print '\nIteration # ', iteration
 
         print '\nBasic index:',
         for i in baseIndex:
             print ' ', i,
 
-        print '\nNon basic index:',
+        print '\nnon-basic index:',
         for i in nonBaseIndex:
             print ' ', i,
 
@@ -88,11 +88,11 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
 
         ##############################################################
         #
-        # Step 2: Calculating the reduced costs of non base index
+        # Step 2: Calculating the reduced costs of non-base index
         #
         ##############################################################
 
-        # For each non base index, calculate the reduced cost
+        # For each non-base index, calculate the reduced cost
         baseCost = numpy.zeros(m)
 
         for i in range(0, m):
@@ -149,7 +149,7 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         ##############################################################
 
         # We don't have a optimun solution yet. Some basic variable must get out of
-        # the base and give his place for one non basic variable. Compute u to verify
+        # the base and give his place for one non-basic variable. Compute u to verify
         # if the solution is unlimited
         u = numpy.dot(inversedB, column(A, choosenJ))
 
@@ -188,7 +188,30 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
 
         print '\nRemove variable of base: x[', indexL, '], theta = ', theta
 
-        break
+        ##############################################################
+        #
+        # Step 5: Update the basic and non-basic variable
+        #
+        ##############################################################
+
+        # Calculate the value of non-basic and update the base
+        for i in range(0, m):
+            # If we find the l indicates who of the basic variable that will leave
+            # the base, replace it with the non-basic variable corresponding to
+            # the j feasible direction of cost reduction
+            if baseIndex[i] == indexL:
+                x[i] = theta
+                baseIndex[i] = choosenJ
+
+        # For the other non-basic variables, it only updates the index of those
+        # who left the base (entered the set of non-basic ones)
+        for i in range(0, n - m):
+            if nonBaseIndex[i] == choosenJ:
+                nonBaseIndex[i] = indexL
+
+        iteration += 1
+
+    return x
 
 
 def column(matrix, index):
@@ -204,7 +227,11 @@ def column(matrix, index):
 
 if __name__ == '__main__':
     # Create a matrix for the problem
-    A = [[1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [3, 2, 0, 0, 1]]
-    b = [4, 6, 18]
-    c = [-3, -5, 0, 0, 0]
-    simplex(A, b, c, [2, 1, 4], [0, 3], 3, 5, 'Goldbarg (pag 104)')
+    # A = [[1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [3, 2, 0, 0, 1]]
+    # b = [4, 6, 18]
+    # c = [-3, -5, 0, 0, 0]
+
+    A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
+    b = [1200, 40, 30]
+    c = [-1000, -1800, 0, 0, 0]
+    simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
