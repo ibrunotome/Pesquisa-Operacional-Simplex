@@ -39,9 +39,11 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     of simplex method
     """
     while True:
+        ##############################################################
         #
-        # Step 1: calculate initial Feasible basic solution
+        # Step 1: Calculate initial Feasible basic solution
         #
+        ##############################################################
 
         # Print basic and non basic index of current iteration (debug)
         print '\nIteration # ', iteration
@@ -76,10 +78,23 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
 
         objective = 0
 
-        for i in range(1, m):
+        for i in range(0, m):
             objective += c[baseIndex[i]] * x[i]
 
         print '\nObjective: ', objective
+
+        ##############################################################
+        #
+        # Step 2: Calculating the reduced costs of non base index
+        #
+        ##############################################################
+
+        # For each non base index, calculate the reduced cost
+        baseCost = numpy.zeros(m)
+
+        for i in range(0, m):
+            baseCost[i] = c[baseIndex[i]]
+            print '\nc_B[', baseIndex[i], '] = ', baseCost[i]
 
         break
 
