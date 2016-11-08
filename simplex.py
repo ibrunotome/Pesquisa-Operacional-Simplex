@@ -1,5 +1,6 @@
 # coding=utf-8
 import numpy
+import sys
 
 
 def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
@@ -67,8 +68,10 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         # Print the base B just for debug
         print 'Base: ', B
 
-        # Calculate the initial Feasible basic solution by inverse of B * b
+        # Calculate the inverse of B
         inversedB = numpy.linalg.inv(B)
+        # Calculate the initial Feasible basic solution by inverse of B * b
+
         x = numpy.dot(inversedB, b)
 
         print '\nInversed base: ', inversedB
@@ -96,6 +99,46 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
             baseCost[i] = c[baseIndex[i]]
             print '\nc_B[', baseIndex[i], '] = ', baseCost[i]
 
+        choosenJ = -1
+        choosenCost = -sys.maxsize
+
+        for j in nonBaseIndex:
+            print column(A, j)
+
+            # Calculate the j feasible direction by the product -B^{-1}A_j, just for debug
+            direction = numpy.dot(-inversedB, column(A, j))
+
+            # Calculate the reduced cost
+            cost = numpy.dot(baseCost.transpose(), inversedB)
+            cost = c[j] - numpy.dot(cost, column(A, j))
+
+            if cost < 0 and cost < choosenCost:
+                choosenJ = j
+                choosenCost = cost
+
+            # Print the j feasible direction, just for debug
+            print '\nFeasible direction:', j, 'Reduced cost =', cost
+
+            for i in range(0, m):
+                print 'd_B[', baseIndex[i], '] = ', direction[i]
+
+            # If no index was found with reduced cost, we have a optimun
+            if choosenJ == -1:
+                # Show the optimun solution, just for debug
+                objectiveValue = 0
+                for i in range(0, m):
+                    objectiveValue += (baseCost[i] * x[i])
+
+                print '\nObjective = ', objectiveValue, ' (found on iteration nº ', iteration, ')'
+                solution = numpy.zeros(n)
+
+                for i in range(0, m):
+                    solution[baseIndex[i]] = x[i]
+
+                for i in range(0, n):
+                    print 'x[', i, ']', solution[i]
+
+            print 'Put variable on base: x[', choosenJ, ']'
         break
 
 
