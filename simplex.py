@@ -7,7 +7,7 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     """
     Resolve linear problems by using the simplex method porposed byDantzig in 1947.
 
-    Code adapted of Diego Mello
+    Code adapted of Diego Mello R script
 
     :param A:
     :param b:
