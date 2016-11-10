@@ -5,7 +5,7 @@ import sys
 
 def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     """
-    Resolve problems of linear problem by using the simplex method porposed byDantzig in 1947.
+    Resolve linear problems by using the simplex method porposed byDantzig in 1947.
 
     Code adapted of Diego Mello
 
@@ -19,6 +19,7 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     :param title:
     """
     iteration = 0
+    x = None
 
     print 'A',
     print numpy.asmatrix(A)
