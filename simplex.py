@@ -3,17 +3,17 @@ import numpy
 import sys
 
 
-def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
+def simplex(matrix_a, vector_b, costs_c, base_index, non_base_ndex, m, n, title):
     """
     Resolve linear problems by using the simplex method porposed byDantzig in 1947.
 
     Code adapted of Diego Mello R script
 
-    :param A:
-    :param b:
-    :param c:
-    :param baseIndex:
-    :param nonBaseIndex:
+    :param matrix_a:
+    :param vector_b:
+    :param costs_c:
+    :param base_index:
+    :param non_base_ndex:
     :param m:
     :param n:
     :param title:
@@ -22,13 +22,13 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
     x = None
 
     print 'A',
-    print numpy.asmatrix(A)
+    print numpy.asmatrix(matrix_a)
 
     print 'b',
-    print b
+    print vector_b
 
     print 'c',
-    print c
+    print costs_c
 
     # Print the title of problem
 
@@ -51,31 +51,31 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         print '\nIteration # ', iteration
 
         print '\nBasic index:',
-        for i in baseIndex:
+        for i in base_index:
             print ' ', i,
 
         print '\nnon-basic index:',
-        for i in nonBaseIndex:
+        for i in non_base_ndex:
             print ' ', i,
 
         # Create a blank matrix B with m x m dimensions
-        B = numpy.zeros((m, m))
+        matrix_b = numpy.zeros((m, m))
 
         print '\n'
         # Copy the columns that form the initial base
         for j in range(0, m):
-            B[:, j] = column(A, baseIndex[j])
+            matrix_b[:, j] = column(matrix_a, base_index[j])
 
         # Print the base B just for debug
-        print 'Base: ', B
+        print 'Base: ', matrix_b
 
         # Calculate the inverse of B
-        inversedB = numpy.linalg.inv(B)
+        inversed_b = numpy.linalg.inv(matrix_b)
         # Calculate the initial Feasible basic solution by inverse of B * b
 
-        x = numpy.dot(inversedB, b)
+        x = numpy.dot(inversed_b, vector_b)
 
-        print '\nInversed base: ', inversedB
+        print '\nInversed base: ', inversed_b
 
         print '\nFeasible basic solution interation: ', iteration,
         print x
@@ -83,7 +83,7 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         objective = 0
 
         for i in range(0, m):
-            objective += c[baseIndex[i]] * x[i]
+            objective += costs_c[base_index[i]] * x[i]
 
         print '\nObjective: ', objective
 
@@ -94,54 +94,54 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         ##############################################################
 
         # For each non-base index, calculate the reduced cost
-        baseCost = numpy.zeros(m)
+        base_cost = numpy.zeros(m)
 
         for i in range(0, m):
-            baseCost[i] = c[baseIndex[i]]
-            print 'c_B[', baseIndex[i], '] = ', baseCost[i]
+            base_cost[i] = costs_c[base_index[i]]
+            print 'c_B[', base_index[i], '] = ', base_cost[i]
 
-        choosenJ = -1
-        choosenCost = sys.maxsize
+        choosen_j = -1
+        choosen_cost = sys.maxsize
 
-        for j in nonBaseIndex:
-            print column(A, j)
+        for j in non_base_ndex:
+            print column(matrix_a, j)
 
             # Calculate the j feasible direction by the product -B^{-1}A_j, just for debug
-            direction = numpy.dot(-inversedB, column(A, j))
+            direction = numpy.dot(-inversed_b, column(matrix_a, j))
 
             # Calculate the reduced cost
-            cost = numpy.dot(baseCost.transpose(), inversedB)
-            cost = c[j] - numpy.dot(cost, column(A, j))
+            cost = numpy.dot(base_cost.transpose(), inversed_b)
+            cost = costs_c[j] - numpy.dot(cost, column(matrix_a, j))
 
-            if cost < 0 and cost < choosenCost:
-                choosenJ = j
-                choosenCost = cost
+            if cost < 0 and cost < choosen_cost:
+                choosen_j = j
+                choosen_cost = cost
 
             # Print the j feasible direction, just for debug
             print '\nFeasible direction:', j, 'Reduced cost =', cost
 
             for i in range(0, m):
-                print 'd_B[', baseIndex[i], '] = ', direction[i]
+                print 'd_B[', base_index[i], '] = ', direction[i]
 
         # If no index was found with reduced cost, we have a optimun
-        if choosenJ == -1:
+        if choosen_j == -1:
             # Show the optimun solution, just for debug
-            objectiveValue = 0
+            objective_value = 0
             for i in range(0, m):
-                objectiveValue += (baseCost[i] * x[i])
+                objective_value += (base_cost[i] * x[i])
 
-            print '\nObjective = ', objectiveValue, ' (found on iteration nº ', iteration, ')'
+            print '\nObjective = ', objective_value, ' (found on iteration nº ', iteration, ')'
             solution = numpy.zeros(n)
 
             for i in range(0, m):
-                solution[baseIndex[i]] = x[i]
+                solution[base_index[i]] = x[i]
 
             for i in range(0, n):
                 print 'x[', i, ']', solution[i]
 
             return x
 
-        print '\nPut variable on base: x[', choosenJ, ']'
+        print '\nPut variable on base: x[', choosen_j, ']'
 
         ##############################################################
         #
@@ -152,18 +152,18 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
         # We don't have a optimun solution yet. Some basic variable must get out of
         # the base and give his place for one non-basic variable. Compute u to verify
         # if the solution is unlimited
-        u = numpy.dot(inversedB, column(A, choosenJ))
+        u = numpy.dot(inversed_b, column(matrix_a, choosen_j))
 
         # Check if no one of the components of u is positive
-        positiveExists = False
+        positive_exists = False
 
         for i in range(0, m):
             if u[i] > 0:
-                positiveExists = True
+                positive_exists = True
 
         # Test. If doesn't have no one positive value on vector u, it's because
         # the optimun value is -infinite
-        if not positiveExists:
+        if not positive_exists:
             print '\nOptimun cost = -infinite'
             return numpy.repeat(sys.maxsize, n)
 
@@ -175,7 +175,7 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
 
         # Kick a high value for theta, and it decreases according to the reason x_i / u_i
         theta = sys.maxsize
-        indexL = -1
+        index_l = -1
 
         for i in range(0, m):
             if u[i] > 0:
@@ -185,9 +185,9 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
                 # Update the reason, because we find a lower value of theta
                 if reason < theta:
                     theta = reason
-                    indexL = baseIndex[i]
+                    index_l = base_index[i]
 
-        print '\nRemove variable of base: x[', indexL, '], theta = ', theta
+        print '\nRemove variable of base: x[', index_l, '], theta = ', theta
 
         ##############################################################
         #
@@ -200,15 +200,15 @@ def simplex(A, b, c, baseIndex, nonBaseIndex, m, n, title):
             # If we find the l indicates who of the basic variable that will leave
             # the base, replace it with the non-basic variable corresponding to
             # the j feasible direction of cost reduction
-            if baseIndex[i] == indexL:
+            if base_index[i] == index_l:
                 x[i] = theta
-                baseIndex[i] = choosenJ
+                base_index[i] = choosen_j
 
         # For the other non-basic variables, it only updates the index of those
         # who left the base (entered the set of non-basic ones)
         for i in range(0, n - m):
-            if nonBaseIndex[i] == choosenJ:
-                nonBaseIndex[i] = indexL
+            if non_base_ndex[i] == choosen_j:
+                non_base_ndex[i] = index_l
 
         iteration += 1
 
@@ -221,7 +221,7 @@ def column(matrix, index):
 
     :param matrix:
     :param index:
-    :return:
+    :return list:
     """
     return [row[index] for row in matrix]
 
