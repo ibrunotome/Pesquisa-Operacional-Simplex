@@ -28,7 +28,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
     :param costs_c: is the costs vector
     :param base_index: is the index of matrix_a that form the bases of the initial feasible basic solution
     :param non_base_index: is the index of non-basic variables
-    :param m: are the lines of matrix_a
+    :param m: are the rows of matrix_a
     :param n: are the cols of matrix_a
     :param title: is the title of the problem
     """
@@ -77,7 +77,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         print '\n'
         # Copy the columns that form the initial base
-        for j in range(0, m):
+        for j in xrange(m):
             matrix_b[:, j] = column(matrix_a, base_index[j])
 
         # Print the base B just for debug
@@ -96,7 +96,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         objective = 0
 
-        for i in range(0, m):
+        for i in xrange(m):
             objective += costs_c[base_index[i]] * x[i]
 
         print '\nObjective: ', objective
@@ -110,7 +110,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         # For each non-base index, calculate the reduced cost
         base_cost = numpy.zeros(m)
 
-        for i in range(0, m):
+        for i in xrange(m):
             base_cost[i] = costs_c[base_index[i]]
             print 'c_B[', base_index[i], '] = ', base_cost[i]
 
@@ -134,23 +134,23 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             # Print the j feasible direction, just for debug
             print '\nFeasible direction:', j, 'Reduced cost =', cost
 
-            for i in range(0, m):
+            for i in xrange(m):
                 print 'd_B[', base_index[i], '] = ', direction[i]
 
         # If no index was found with reduced cost, we have a optimun
         if choosen_j == -1:
             # Show the optimun solution, just for debug
             objective_value = 0
-            for i in range(0, m):
+            for i in xrange(m):
                 objective_value += (base_cost[i] * x[i])
 
             print '\nObjective = ', objective_value, ' (Found on iteration nº ', iteration, ')'
             solution = numpy.zeros(n)
 
-            for i in range(0, m):
+            for i in xrange(m):
                 solution[base_index[i]] = x[i]
 
-            for i in range(0, n):
+            for i in xrange(n):
                 print 'x[', i, ']', solution[i]
 
             return x
@@ -171,7 +171,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         # Check if no one of the components of u is positive
         positive_exists = False
 
-        for i in range(0, m):
+        for i in xrange(m):
             if u[i] > 0:
                 positive_exists = True
 
@@ -191,7 +191,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         theta = sys.maxsize
         index_l = -1
 
-        for i in range(0, m):
+        for i in xrange(m):
             if u[i] > 0:
                 # Calculate the rason
                 reason = x[i] / u[i]
@@ -210,7 +210,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         ##############################################################
 
         # Calculate the value of non-basic and update the base
-        for i in range(0, m):
+        for i in xrange(m):
             # If we find the l indicates who of the basic variable that will leave
             # the base, replace it with the non-basic variable corresponding to
             # the j feasible direction of cost reduction
@@ -220,7 +220,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         # For the other non-basic variables, it only updates the index of those
         # who left the base (entered the set of non-basic ones)
-        for i in range(0, n - m):
+        for i in xrange(n - m):
             if non_base_index[i] == choosen_j:
                 non_base_index[i] = index_l
 
@@ -240,26 +240,26 @@ def column(matrix, index):
     return [row[index] for row in matrix]
 
 
-####################################
+##################################################
 #
-# Requirement 02 - Data Entry
+# Requirement 02 - Data Structure + Operations
 #
-####################################
-def create_matrix(lines, columns):
+##################################################
+def create_matrix(rows, columns):
     """
-    Create and return a matrix with m lines and n columns
+    Create and return a matrix with m rows and n columns
     fill with zeros, it' the same to do:
     matrix = [[0,0,0], [0,0,0], [0,0,0]]
 
-    :param lines:
+    :param rows:
     :param columns:
     :return:
     """
 
     matrix = []  # Empty list
-    for i in range(lines):
+    for i in xrange(rows):
         linha = []  # Empty list
-        for j in range(columns):
+        for j in xrange(columns):
             linha.append(0)
 
         # Put the line in the matrix
@@ -269,19 +269,57 @@ def create_matrix(lines, columns):
 
 
 ###############################################
+# Requirement 02 - c)
+#
+# Dot product of the matrix, considering the
+# compatibility between rows and cols
+###############################################
+def multiply_matrix(matrix_a, matrix_b):
+    # Confirm dimensions
+    matrix_a_rows = len(matrix_a)
+    matrix_a_cols = len(matrix_a[0])
+    matrix_b_rows = len(matrix_b)
+    matrix_b_cols = len(matrix_b[0])
+
+    ####################################################
+    # Test if is possible to multiply the both matrix,
+    # otherwise, trows a exception
+    #
+    # THIS IS A PART OF THE REQUIRIMENT 02 - c)
+    ####################################################
+    assert (matrix_a_cols == matrix_b_rows)  # Test if is possible to multiply the both matrix
+
+    rows = matrix_a_rows
+    cols = matrix_b_cols
+
+    # Create the result matrix c = a*b
+    result = create_matrix(rows, cols)
+
+    # Now find each value in turn in the result matrix
+    for row in xrange(rows):
+        for col in xrange(cols):
+            dot_product = 0
+            for i in xrange(matrix_a_cols):
+                dot_product += matrix_a[row][i] * matrix_b[i][col]
+            result[row][col] = dot_product
+
+    return result
+
+
+###############################################
 # Requirement 02 - d)
 #
 # Calculus of the transpose of matrix
 ###############################################
 def transpose(matrix):
     """
-    Transpose the matrix passed (lines become columns and columns become lines)
+    Transpose the matrix passed (rows become columns and columns become rows)
 
     :param matrix:
     :return:
     """
 
-    return [[row[i] for row in matrix] for i in range(len(matrix[0]))]
+    return [[row[i] for row in matrix] for i in xrange(len(matrix[0]))]
 
 
 if __name__ == '__main__':
@@ -291,10 +329,15 @@ if __name__ == '__main__':
     #
     ####################################
 
-    A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
+    # A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
     # b = [1200, 40, 30]
     # c = [-1000, -1800, 0, 0, 0]
     # simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
-    # A = create_matrix(3, 5)
 
-    print transpose(A)
+    a = [[1, 2, 3],
+         [4, 5, 6]]
+    b = [[0, 3],
+         [1, 4],
+         [2, 5]]
+
+    print multiply_matrix(a, b)
