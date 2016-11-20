@@ -3,20 +3,34 @@ import numpy
 import sys
 
 
-def simplex(matrix_a, vector_b, costs_c, base_index, non_base_ndex, m, n, title):
+######################################################################################################
+#
+# Método simplex, adaptado do algoritmo R fornecido
+#
+# Disciplina: Pesquisa Operacional
+# Alunos: Bruno Tomé - 0011254
+#         Ronan Nunes - 0011219
+# Professor: Diego Mello Silva
+#
+# Repositório no GitHub: https://github.com/ibrunotome/Pesquisa-Operacional-Simplex
+#
+######################################################################################################
+
+
+def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title):
     """
     Resolve linear problems by using the simplex method porposed byDantzig in 1947.
 
     Code adapted of Diego Mello R script
 
-    :param matrix_a:
-    :param vector_b:
-    :param costs_c:
-    :param base_index:
-    :param non_base_ndex:
-    :param m:
-    :param n:
-    :param title:
+    :param matrix_a: is a matrix of coefficients
+    :param vector_b: is the resource vector
+    :param costs_c: is the costs vector
+    :param base_index: is the index of matrix_a that form the bases of the initial feasible basic solution
+    :param non_base_index: is the index of non-basic variables
+    :param m: are the lines of matrix_a
+    :param n: are the cols of matrix_a
+    :param title: is the title of the problem
     """
     iteration = 0
     x = None
@@ -48,14 +62,14 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_ndex, m, n, title)
         ##############################################################
 
         # Print basic and non-basic index of current iteration (debug)
-        print '\nIteration # ', iteration
+        print '\n################\n# Iteration #', iteration, '\n################'
 
         print '\nBasic index:',
         for i in base_index:
             print ' ', i,
 
-        print '\nnon-basic index:',
-        for i in non_base_ndex:
+        print '\nNon-basic index:',
+        for i in non_base_index:
             print ' ', i,
 
         # Create a blank matrix B with m x m dimensions
@@ -103,7 +117,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_ndex, m, n, title)
         choosen_j = -1
         choosen_cost = sys.maxsize
 
-        for j in non_base_ndex:
+        for j in non_base_index:
             print column(matrix_a, j)
 
             # Calculate the j feasible direction by the product -B^{-1}A_j, just for debug
@@ -130,7 +144,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_ndex, m, n, title)
             for i in range(0, m):
                 objective_value += (base_cost[i] * x[i])
 
-            print '\nObjective = ', objective_value, ' (found on iteration nº ', iteration, ')'
+            print '\nObjective = ', objective_value, ' (Found on iteration nº ', iteration, ')'
             solution = numpy.zeros(n)
 
             for i in range(0, m):
@@ -207,8 +221,8 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_ndex, m, n, title)
         # For the other non-basic variables, it only updates the index of those
         # who left the base (entered the set of non-basic ones)
         for i in range(0, n - m):
-            if non_base_ndex[i] == choosen_j:
-                non_base_ndex[i] = index_l
+            if non_base_index[i] == choosen_j:
+                non_base_index[i] = index_l
 
         iteration += 1
 
@@ -226,13 +240,61 @@ def column(matrix, index):
     return [row[index] for row in matrix]
 
 
+####################################
+#
+# Requirement 02 - Data Entry
+#
+####################################
+def create_matrix(lines, columns):
+    """
+    Create and return a matrix with m lines and n columns
+    fill with zeros, it' the same to do:
+    matrix = [[0,0,0], [0,0,0], [0,0,0]]
+
+    :param lines:
+    :param columns:
+    :return:
+    """
+
+    matrix = []  # Empty list
+    for i in range(lines):
+        linha = []  # Empty list
+        for j in range(columns):
+            linha.append(0)
+
+        # Put the line in the matrix
+        matrix.append(linha)
+
+    return matrix
+
+
+###############################################
+# Requirement 02 - d)
+#
+# Calculus of the transpose of matrix
+###############################################
+def transpose(matrix):
+    """
+    Transpose the matrix passed (lines become columns and columns become lines)
+
+    :param matrix:
+    :return:
+    """
+
+    return [[row[i] for row in matrix] for i in range(len(matrix[0]))]
+
+
 if __name__ == '__main__':
-    # Create a matrix for the problem
-    # A = [[1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [3, 2, 0, 0, 1]]
-    # b = [4, 6, 18]
-    # c = [-3, -5, 0, 0, 0]
+    ####################################
+    #
+    # Requirement 01 - Data Entry
+    #
+    ####################################
 
     A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
-    b = [1200, 40, 30]
-    c = [-1000, -1800, 0, 0, 0]
-    simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
+    # b = [1200, 40, 30]
+    # c = [-1000, -1800, 0, 0, 0]
+    # simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
+    # A = create_matrix(3, 5)
+
+    print transpose(A)
