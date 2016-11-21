@@ -1,6 +1,7 @@
 # coding=utf-8
 import numpy
 import sys
+import matrix
 
 
 ######################################################################################################
@@ -32,6 +33,8 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
     :param n: are the cols of matrix_a
     :param title: is the title of the problem
     """
+
+    tad_matrix = matrix.Matrix()
     iteration = 0
     x = None
 
@@ -73,12 +76,15 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             print ' ', i,
 
         # Create a blank matrix B with m x m dimensions
-        matrix_b = numpy.zeros((m, m))
+        matrix_b = tad_matrix.create_matrix(m, m)
 
         print '\n'
+
         # Copy the columns that form the initial base
         for j in xrange(m):
-            matrix_b[:, j] = column(matrix_a, base_index[j])
+            matrix_b[j] = tad_matrix.column(matrix_a, base_index[j])
+
+        matrix_b = tad_matrix.transpose(matrix_b)
 
         # Print the base B just for debug
         print 'Base: ', matrix_b
@@ -118,7 +124,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         choosen_cost = sys.maxsize
 
         for j in non_base_index:
-            print column(matrix_a, j)
+            print tad_matrix.column(matrix_a, j)
             ##############################################################
             #
             # Requirement 05 - Calculus of -B^{-1}A_j
@@ -126,7 +132,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             ##############################################################
 
             # Calculate the j feasible direction by the product -B^{-1}A_j, just for debug
-            direction = numpy.dot(-inversed_b, column(matrix_a, j))
+            direction = numpy.dot(-inversed_b, tad_matrix.column(matrix_a, j))
 
             ##############################################################
             #
@@ -135,7 +141,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             ##############################################################
             # Calculate the reduced cost
             cost = numpy.dot(base_cost.transpose(), inversed_b)
-            cost = costs_c[j] - numpy.dot(cost, column(matrix_a, j))
+            cost = costs_c[j] - numpy.dot(cost, tad_matrix.column(matrix_a, j))
 
             if cost < 0 and cost < choosen_cost:
                 choosen_j = j
@@ -176,7 +182,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         # We don't have a optimun solution yet. Some basic variable must get out of
         # the base and give his place for one non-basic variable. Compute u to verify
         # if the solution is unlimited
-        u = numpy.dot(inversed_b, column(matrix_a, choosen_j))
+        u = numpy.dot(inversed_b, tad_matrix.column(matrix_a, choosen_j))
 
         # Check if no one of the components of u is positive
         positive_exists = False
@@ -247,146 +253,6 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         iteration += 1
 
     return x
-
-
-def column(matrix, index):
-    """
-    Return the requested column of a matrix
-
-    :param matrix:
-    :param index:
-    :return list:
-    """
-    return [row[index] for row in matrix]
-
-
-def make_identity(n):
-    """
-    Create an identity matrix
-
-    :param n:
-    :return:
-    """
-    result = create_matrix(n, n)
-    for i in xrange(n):
-        result[i][i] = 1
-    return result
-
-
-##################################################
-#
-# Requirement 02 - Data Structure + Operations
-#
-##################################################
-def create_matrix(rows, columns):
-    """
-    Create and return a matrix with m rows and n columns
-    fill with zeros, it' the same to do:
-    matrix = [[0,0,0], [0,0,0], [0,0,0]]
-
-    :param rows:
-    :param columns:
-    :return:
-    """
-
-    matrix = []  # Empty list
-    for i in xrange(rows):
-        linha = []  # Empty list
-        for j in xrange(columns):
-            linha.append(0)
-
-        # Put the line in the matrix
-        matrix.append(linha)
-
-    return matrix
-
-
-###############################################
-# Requirement 02 - a)
-#
-# Calculus of scalar product by given a matrix
-# and a scalar
-###############################################
-def scalar_x_matrix(matrix, scalar):
-    """
-    Do a scalar product with a matrix
-
-    :param matrix:
-    :param scalar:
-    :return:
-    """
-    return [scalar_x_vector(matrix[i], scalar) for i in xrange(len(column(matrix, 0)))]
-
-
-###############################################
-# Requirement 02 - b)
-#
-# Calculus of scalar product by given a row
-# or col of a matrix, or given a single vector
-###############################################
-def scalar_x_vector(vector, scalar):
-    """
-    Do a scalar product with a vector
-
-    :param vector:
-    :param scalar:
-    :return:
-    """
-    return [vector[i] * scalar for i in xrange(len(vector))]
-
-
-###############################################
-# Requirement 02 - c)
-#
-# Dot product of the matrix, considering the
-# compatibility between rows and cols
-###############################################
-def multiply_matrix(matrix_a, matrix_b):
-    # Confirm dimensions
-    matrix_a_rows = len(matrix_a)
-    matrix_a_cols = len(matrix_a[0])
-    matrix_b_rows = len(matrix_b)
-    matrix_b_cols = len(matrix_b[0])
-
-    ####################################################
-    # Test if is possible to multiply the both matrix,
-    # otherwise, trows a exception
-    #
-    # THIS IS A PART OF THE REQUIRIMENT 02 - c)
-    ####################################################
-    assert (matrix_a_cols == matrix_b_rows)  # Test if is possible to multiply the both matrix
-
-    rows = matrix_a_rows
-    cols = matrix_b_cols
-
-    # Create the result matrix c = a*b
-    result = create_matrix(rows, cols)
-
-    # Now find each value in turn in the result matrix
-    for row in xrange(rows):
-        for col in xrange(cols):
-            dot_product = 0
-            for i in xrange(matrix_a_cols):
-                dot_product += matrix_a[row][i] * matrix_b[i][col]
-            result[row][col] = dot_product
-
-    return result
-
-
-###############################################
-# Requirement 02 - d)
-#
-# Calculus of the transpose of matrix
-###############################################
-def transpose(matrix):
-    """
-    Transpose the matrix passed (rows become columns and columns become rows)
-
-    :param matrix:
-    :return:
-    """
-
-    return [[row[i] for row in matrix] for i in xrange(len(matrix[0]))]
 
 
 if __name__ == '__main__':
