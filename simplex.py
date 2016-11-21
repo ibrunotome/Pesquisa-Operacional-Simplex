@@ -119,10 +119,20 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         for j in non_base_index:
             print column(matrix_a, j)
+            ##############################################################
+            #
+            # Requirement 05 - Calculus of -B^{-1}A_j
+            #
+            ##############################################################
 
             # Calculate the j feasible direction by the product -B^{-1}A_j, just for debug
             direction = numpy.dot(-inversed_b, column(matrix_a, j))
 
+            ##############################################################
+            #
+            # Requirement 04 - Calculate the reduced cost
+            #
+            ##############################################################
             # Calculate the reduced cost
             cost = numpy.dot(base_cost.transpose(), inversed_b)
             cost = costs_c[j] - numpy.dot(cost, column(matrix_a, j))
@@ -186,6 +196,11 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         # Step 4: Determinate the value of theta
         #
         ##############################################################
+        ##############################################################
+        #
+        # Requirement 06 - Update the value of theta
+        #
+        ##############################################################
 
         # Kick a high value for theta, and it decreases according to the reason x_i / u_i
         theta = sys.maxsize
@@ -206,6 +221,11 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         ##############################################################
         #
         # Step 5: Update the basic and non-basic variable
+        #
+        ##############################################################
+        ##############################################################
+        #
+        # Requirement 07 - Change of base
         #
         ##############################################################
 
@@ -377,6 +397,6 @@ if __name__ == '__main__':
     ####################################
 
     A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
-    # b = [1200, 40, 30]
-    # c = [-1000, -1800, 0, 0, 0]
-    # simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
+    b = [1200, 40, 30]
+    c = [-1000, -1800, 0, 0, 0]
+    simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
