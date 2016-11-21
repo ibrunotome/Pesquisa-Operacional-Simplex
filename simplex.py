@@ -240,6 +240,19 @@ def column(matrix, index):
     return [row[index] for row in matrix]
 
 
+def make_identity(n):
+    """
+    Create an identity matrix
+
+    :param n:
+    :return:
+    """
+    result = create_matrix(n, n)
+    for i in xrange(n):
+        result[i][i] = 1
+    return result
+
+
 ##################################################
 #
 # Requirement 02 - Data Structure + Operations
@@ -266,6 +279,40 @@ def create_matrix(rows, columns):
         matrix.append(linha)
 
     return matrix
+
+
+###############################################
+# Requirement 02 - a)
+#
+# Calculus of scalar product by given a matrix
+# and a scalar
+###############################################
+def scalar_x_matrix(matrix, scalar):
+    """
+    Do a scalar product with a matrix
+
+    :param matrix:
+    :param scalar:
+    :return:
+    """
+    return [scalar_x_vector(matrix[i], scalar) for i in xrange(len(column(matrix, 0)))]
+
+
+###############################################
+# Requirement 02 - b)
+#
+# Calculus of scalar product by given a row
+# or col of a matrix, or given a single vector
+###############################################
+def scalar_x_vector(vector, scalar):
+    """
+    Do a scalar product with a vector
+
+    :param vector:
+    :param scalar:
+    :return:
+    """
+    return [vector[i] * scalar for i in xrange(len(vector))]
 
 
 ###############################################
@@ -329,15 +376,7 @@ if __name__ == '__main__':
     #
     ####################################
 
-    # A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
+    A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
     # b = [1200, 40, 30]
     # c = [-1000, -1800, 0, 0, 0]
     # simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
-
-    a = [[1, 2, 3],
-         [4, 5, 6]]
-    b = [[0, 3],
-         [1, 4],
-         [2, 5]]
-
-    print multiply_matrix(a, b)
