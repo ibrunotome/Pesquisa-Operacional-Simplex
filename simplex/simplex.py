@@ -1,6 +1,6 @@
 # coding=utf-8
-import numpy
 import sys
+import numpy
 import matrix
 
 
@@ -38,20 +38,16 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
     iteration = 0
     x = None
 
-    print 'A',
-    print numpy.asmatrix(matrix_a)
+    print 'A', matrix_a
 
-    print 'b',
-    print vector_b
+    print 'b', vector_b
 
-    print 'c',
-    print costs_c
+    print 'c', costs_c
 
     # Print the title of problem
 
-    print '\n\n-------------------------------------------------------------'
-    print title
-    print '-------------------------------------------------------------'
+    print '-------------------------------------------------------------', title, \
+        '-------------------------------------------------------------'
 
     """
     Main while of application, do the five steps prorposed of Bertsimas and Tsiksiklis to do a complete iteration
@@ -78,8 +74,6 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         # Create a blank matrix B with m x m dimensions
         matrix_b = tad_matrix.create_matrix(m, m)
 
-        print '\n'
-
         # Copy the columns that form the initial base
         for j in xrange(m):
             matrix_b[j] = tad_matrix.column(matrix_a, base_index[j])
@@ -97,8 +91,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         print '\nInversed base: ', inversed_b
 
-        print '\nFeasible basic solution interation: ', iteration,
-        print x
+        print '\nFeasible basic solution interation', iteration, ':', x
 
         objective = 0
 

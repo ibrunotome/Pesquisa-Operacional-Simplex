@@ -77,33 +77,14 @@ class Matrix(object):
         :param matrix_b:
         :return:
         """
-        matrix_a_rows = len(matrix_a)
-        matrix_a_cols = len(matrix_a[0])
-        matrix_b_rows = len(matrix_b)
-        matrix_b_cols = len(matrix_b[0])
-
-        ####################################################
-        # Test if is possible to multiply the both matrix,
-        # otherwise, trows a exception
-        #
-        # THIS IS A PART OF THE REQUIRIMENT 02 - c)
-        ####################################################
-        assert (matrix_a_cols == matrix_b_rows)  # Test if is possible to multiply the both matrix
-
-        rows = matrix_a_rows
-        cols = matrix_b_cols
-
-        # Create the result matrix c = a*b
-        result = Matrix.create_matrix(rows, cols)
-
-        # Now find each value in turn in the result matrix
-        for row in xrange(rows):
-            for col in xrange(cols):
-                dot_product = 0
-                for i in xrange(matrix_a_cols):
-                    dot_product += matrix_a[row][i] * matrix_b[i][col]
-                result[row][col] = dot_product
-
+        result = Matrix.create_matrix(len(matrix_a), len(matrix_b))
+        # iterate through rows of X
+        for i in range(len(matrix_a)):
+            # iterate through columns of Y
+            for j in range(len(matrix_b)):
+                # iterate through rows of Y
+                for k in range(len(matrix_b)):
+                    result[i][j] += matrix_a[i][k] * matrix_b[k]
         return result
 
     ###############################################
