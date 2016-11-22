@@ -1,3 +1,22 @@
+# coding=utf-8
+
+import numpy
+
+
+######################################################################################################
+#
+# TAD Matrix para o simplex
+#
+# Disciplina: Pesquisa Operacional
+# Alunos: Bruno Tomé - 0011254
+#         Ronan Nunes - 0011219
+# Professor: Diego Mello Silva
+#
+# Repositório no GitHub: https://github.com/ibrunotome/Pesquisa-Operacional-Simplex
+#
+######################################################################################################
+
+
 class Matrix(object):
     ##################################################
     #
@@ -34,7 +53,7 @@ class Matrix(object):
     # and a scalar
     ###############################################
     @staticmethod
-    def scalar_x_matrix(matrix, scalar):
+    def matrix_x_scalar(matrix, scalar):
         """
         Do a scalar product with a matrix
 
@@ -42,7 +61,7 @@ class Matrix(object):
         :param scalar:
         :return:
         """
-        return [Matrix.scalar_x_vector(matrix[i], scalar) for i in xrange(len(Matrix.column(matrix, 0)))]
+        return [Matrix.vector_x_scalar(matrix[i], scalar) for i in xrange(len(Matrix.column(matrix, 0)))]
 
     ###############################################
     # Requirement 02 - b)
@@ -51,7 +70,7 @@ class Matrix(object):
     # or col of a matrix, or given a single vector
     ###############################################
     @staticmethod
-    def scalar_x_vector(vector, scalar):
+    def vector_x_scalar(vector, scalar):
         """
         Do a scalar product with a vector
 
@@ -68,24 +87,52 @@ class Matrix(object):
     # compatibility between rows and cols
     ###############################################
     @staticmethod
-    def multiply_matrix(matrix_a, matrix_b):
-        # Confirm dimensions
+    def matrix_x_matrix(matrix_a, matrix_b):
         """
         Multiply two matrix, checking first if is possible do that
+        If try works, it's because two matrix are passed by parameters,
+        If catch into Except, it' because a matrix and a vector are passed by parameters.
 
         :param matrix_a:
         :param matrix_b:
         :return:
         """
-        result = Matrix.create_matrix(len(matrix_a), len(matrix_b))
-        # iterate through rows of X
-        for i in range(len(matrix_a)):
-            # iterate through columns of Y
-            for j in range(len(matrix_b)):
-                # iterate through rows of Y
-                for k in range(len(matrix_b)):
-                    result[i][j] += matrix_a[i][k] * matrix_b[k]
-        return result
+
+        try:
+            result = []  # Final result
+            for i in range(len(matrix_a)):
+
+                row = []  # The new row in new matrix
+                for j in range(len(matrix_b)):
+                    product = 0  # The new element in the new row
+
+                    for v in range(len(matrix_a[i])):
+                        product += matrix_a[i][v] * matrix_b[v][j]
+
+                    row.append(product)  # Append sum of product into the new row
+
+                result.append(row)  # Append the new row into the final result
+
+            return result
+        except TypeError:
+            try:
+                rows = len(matrix_a)
+                result = [0] * rows  # Result will be a vector with quantity cols equal to matrix quantity rows
+                sum_result = 0
+
+                for j in xrange(rows):
+                    r = matrix_a[j]
+                    for i in xrange(len(matrix_b)):
+                        sum_result += r[i] * matrix_b[i]  # Sum of the product
+
+                    result[j], sum_result = sum_result, 0
+                return result
+            except IndexError:
+                result = [0] * len(matrix_a)
+                for i in xrange(len(matrix_a)):
+                    result[i] = matrix_a[i] * matrix_b[i]
+
+                return result[0]
 
     ###############################################
     # Requirement 02 - d)
@@ -101,8 +148,42 @@ class Matrix(object):
         :return:
         """
 
-        return [[row[i] for row in matrix] for i in xrange(len(matrix[0]))]
+        try:
+            return [[row[i] for row in matrix] for i in xrange(len(matrix[0]))]
+        except TypeError:  # It's already transposed
+            return matrix
 
+    ###############################################
+    # Requirement 02 - e)
+    #
+    # Calculus of the inverse matrix by using LU
+    # decomposition
+    ###############################################
+    @staticmethod
+    def inverse(matrix):
+        """
+        Make the inverse of a matrix, by LU decomposition method
+
+        :param matrix:
+        :return:
+        """
+
+        #########################################################
+        #
+        # RONAN
+        #
+        # IMAGINE UMA BELA INVERSA USANDO DECOMPOSICAO LU AQUI :)
+        # Depois tem que ir lá no simplex.py e mudar os .inv pra
+        # tad_matrix.inverse(matrix_aqui)
+        #
+        #########################################################
+        return
+
+    ###############################################
+    # Requirement 02 - f)
+    #
+    # Other necessary operations
+    ###############################################
     @staticmethod
     def column(matrix, index):
         """
@@ -123,6 +204,7 @@ class Matrix(object):
         :param n:
         :return:
         """
+
         result = Matrix.create_matrix(n, n)
         for i in xrange(n):
             result[i][i] = 1
@@ -136,6 +218,7 @@ class Matrix(object):
         :param matrix:
         :return:
         """
+
         return len(matrix[0])
 
     @staticmethod
@@ -146,4 +229,5 @@ class Matrix(object):
         :param matrix:
         :return:
         """
+
         return len(matrix)

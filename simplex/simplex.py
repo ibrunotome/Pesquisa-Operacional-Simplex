@@ -87,7 +87,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         inversed_b = numpy.linalg.inv(matrix_b)
         # Calculate the initial Feasible basic solution by inverse of B * b
 
-        x = numpy.dot(inversed_b, vector_b)
+        x = tad_matrix.matrix_x_matrix(inversed_b, vector_b)
 
         print '\nInversed base: ', inversed_b
 
@@ -125,7 +125,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             ##############################################################
 
             # Calculate the j feasible direction by the product -B^{-1}A_j, just for debug
-            direction = numpy.dot(-inversed_b, tad_matrix.column(matrix_a, j))
+            direction = tad_matrix.matrix_x_matrix(-inversed_b, tad_matrix.column(matrix_a, j))
 
             ##############################################################
             #
@@ -133,7 +133,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             #
             ##############################################################
             # Calculate the reduced cost
-            cost = numpy.dot(base_cost.transpose(), inversed_b)
+            cost = numpy.dot(tad_matrix.transpose(base_cost), inversed_b)
             cost = costs_c[j] - numpy.dot(cost, tad_matrix.column(matrix_a, j))
 
             if cost < 0 and cost < choosen_cost:
@@ -175,7 +175,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         # We don't have a optimun solution yet. Some basic variable must get out of
         # the base and give his place for one non-basic variable. Compute u to verify
         # if the solution is unlimited
-        u = numpy.dot(inversed_b, tad_matrix.column(matrix_a, choosen_j))
+        u = tad_matrix.matrix_x_matrix(inversed_b, tad_matrix.column(matrix_a, choosen_j))
 
         # Check if no one of the components of u is positive
         positive_exists = False
