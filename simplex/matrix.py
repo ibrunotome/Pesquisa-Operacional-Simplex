@@ -128,11 +128,7 @@ class Matrix(object):
                     result[j], sum_result = sum_result, 0
                 return result
             except IndexError:
-                result = [0] * len(matrix_a)
-                for i in xrange(len(matrix_a)):
-                    result[i] = matrix_a[i] * matrix_b[i]
-
-                return result[0]
+                return numpy.dot(matrix_a, matrix_b)
 
     ###############################################
     # Requirement 02 - d)

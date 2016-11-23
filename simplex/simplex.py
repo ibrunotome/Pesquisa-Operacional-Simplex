@@ -133,7 +133,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             #
             ##############################################################
             # Calculate the reduced cost
-            cost = numpy.dot(tad_matrix.transpose(base_cost), inversed_b)
+            cost = tad_matrix.matrix_x_matrix(tad_matrix.transpose(base_cost), inversed_b)
             cost = costs_c[j] - numpy.dot(cost, tad_matrix.column(matrix_a, j))
 
             if cost < 0 and cost < choosen_cost:
