@@ -245,8 +245,6 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         iteration += 1
 
-    return x
-
 
 if __name__ == '__main__':
     ####################################
