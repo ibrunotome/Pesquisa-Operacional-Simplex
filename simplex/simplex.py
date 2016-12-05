@@ -83,7 +83,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
         print 'Base: ', matrix_b
 
         # Calculate the inverse of B
-        inversed_b = numpy.linalg.inv(matrix_b)
+        inversed_b = tad_matrix.inverse(matrix_b)
 
         # Calculate the initial Feasible basic solution by inverse of B * b
         x = tad_matrix.matrix_x_matrix(inversed_b, vector_b)

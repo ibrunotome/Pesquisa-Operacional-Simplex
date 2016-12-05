@@ -167,14 +167,14 @@ class Matrix(object):
 
         #########################################################
         #
-        # RONAN
+        # RONAN!!!!
         #
         # IMAGINE UMA BELA INVERSA USANDO DECOMPOSICAO LU AQUI :)
-        # Depois tem que ir lá no simplex.py e mudar os .inv pra
-        # tad_matrix.inverse(matrix_aqui)
+        # E alterar o retorno de inversa implementado pelo numpy
+        # abaixo, pelo que você vai criar.
         #
         #########################################################
-        return
+        return numpy.linalg.inv(matrix)
 
     ###############################################
     # Requirement 02 - f)
