@@ -91,7 +91,8 @@ class Matrix(object):
         """
         Multiply two matrix, checking first if is possible do that
         If try works, it's because two matrix are passed by parameters,
-        If catch into Except, it' because a matrix and a vector are passed by parameters.
+        If catch into TypeError, it's because a matrix and a vector are passed by parameters.
+        If catch into IndexError, it's because a scalar and a vector are passed by parameters.
 
         :param matrix_a:
         :param matrix_b:

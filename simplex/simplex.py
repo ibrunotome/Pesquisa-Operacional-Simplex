@@ -84,8 +84,8 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
         # Calculate the inverse of B
         inversed_b = numpy.linalg.inv(matrix_b)
-        # Calculate the initial Feasible basic solution by inverse of B * b
 
+        # Calculate the initial Feasible basic solution by inverse of B * b
         x = tad_matrix.matrix_x_matrix(inversed_b, vector_b)
 
         print '\nInversed base: ', inversed_b
@@ -133,7 +133,7 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
             ##############################################################
             # Calculate the reduced cost
             cost = tad_matrix.matrix_x_matrix(tad_matrix.transpose(base_cost), inversed_b)
-            cost = costs_c[j] - numpy.dot(cost, tad_matrix.column(matrix_a, j))
+            cost = costs_c[j] - tad_matrix.matrix_x_matrix(cost, tad_matrix.column(matrix_a, j))
 
             if cost < 0 and cost < choosen_cost:
                 choosen_j = j
@@ -251,6 +251,12 @@ if __name__ == '__main__':
     # Requirement 01 - Data Entry
     #
     ####################################
+
+    ########################################################################
+    #
+    # Requirement 08 - Integration with proposed software
+    #
+    ########################################################################
 
     A = [[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
          [1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
