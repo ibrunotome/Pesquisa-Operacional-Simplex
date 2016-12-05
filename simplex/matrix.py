@@ -9,7 +9,7 @@ import numpy
 #
 # Disciplina: Pesquisa Operacional
 # Alunos: Bruno Tomé - 0011254
-#         Ronan Nunes - 0011219
+#         Ronan Nunes - 0011919
 # Professor: Diego Mello Silva
 #
 # Repositório no GitHub: https://github.com/ibrunotome/Pesquisa-Operacional-Simplex
