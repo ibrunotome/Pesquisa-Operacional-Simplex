@@ -10,7 +10,7 @@ import matrix
 #
 # Disciplina: Pesquisa Operacional
 # Alunos: Bruno Tomé - 0011254
-#         Ronan Nunes - 0011219
+#         Ronan Nunes - 0011919
 # Professor: Diego Mello Silva
 #
 # Repositório no GitHub: https://github.com/ibrunotome/Pesquisa-Operacional-Simplex
@@ -36,7 +36,6 @@ def simplex(matrix_a, vector_b, costs_c, base_index, non_base_index, m, n, title
 
     tad_matrix = matrix.Matrix()
     iteration = 0
-    x = None
 
     print 'A', matrix_a
 
@@ -253,7 +252,16 @@ if __name__ == '__main__':
     #
     ####################################
 
-    A = [[20, 30, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]]
-    b = [1200, 40, 30]
-    c = [-1000, -1800, 0, 0, 0]
-    simplex(A, b, c, [2, 3, 4], [0, 1], 3, 5, 'Pag 6')
+    A = [[1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+         [0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+         [0, 1, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0],
+         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+         [0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0],
+         [2860, 3520, 36490, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
+
+    b = [132, 66, 159, 53, 3, 1, 1000000]
+
+    c = [8680, 4140, 82800, 0, 0, 0, 0, 0, 0, 0, 2000000, 2000000, 2000000]
+
+    simplex(A, b, c, [6, 7, 8, 9, 10, 11, 12], [0, 1, 2, 3, 4, 5], 7, 13, 'Trabalho Final')
