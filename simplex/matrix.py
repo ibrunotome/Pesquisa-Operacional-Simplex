@@ -91,8 +91,7 @@ class Matrix(object):
         """
         Multiply two matrix, checking first if is possible do that
         If try works, it's because two matrix are passed by parameters,
-        If catch into TypeError, it's because a matrix and a vector are passed by parameters.
-        If catch into IndexError, it's because a scalar and a vector are passed by parameters.
+        If catch into Except, it' because a matrix and a vector are passed by parameters.
 
         :param matrix_a:
         :param matrix_b:
@@ -165,16 +164,71 @@ class Matrix(object):
         :return:
         """
 
-        #########################################################
-        #
-        # RONAN!!!!
-        #
-        # IMAGINE UMA BELA INVERSA USANDO DECOMPOSICAO LU AQUI :)
-        # E alterar o retorno de inversa implementado pelo numpy
-        # abaixo, pelo que você vai criar.
-        #
-        #########################################################
-        return numpy.linalg.inv(matrix)
+        def mult_matrix(M, N):
+            """Multiply square matrices of same dimension M and N"""
+
+            # Converts N into a list of tuples of columns
+            tuple_N = zip(*N)
+
+            # Nested list comprehension to calculate matrix multiplication
+            return [[sum(el_m * el_n for el_m, el_n in zip(row_m, col_n)) for col_n in tuple_N] for row_m in M]
+
+        def pivot_matrix(M):
+            """Returns the pivoting matrix for M, used in Doolittle's method."""
+            m = len(M)
+
+            # Create an identity matrix, with floating point values
+            id_mat = [[float(i == j) for i in xrange(m)] for j in xrange(m)]
+
+            # Rearrange the identity matrix such that the largest element of
+            # each column of M is placed on the diagonal of of M
+            for j in xrange(m):
+                row = max(xrange(j, m), key=lambda i: abs(M[i][j]))
+                if j != row:
+                    # Swap the rows
+                    id_mat[j], id_mat[row] = id_mat[row], id_mat[j]
+
+            return id_mat
+
+        def aux(l, u):
+            inv = u
+
+            n = len(l)
+
+            for i in xrange(1, n):
+                for j in xrange(i):
+                    inv[i][j] = l[i][j]
+
+            return inv
+
+        """Performs an LU Decomposition of matrix (which must be square)
+        into PA = LU. The function returns P, L and U."""
+        n = len(matrix)
+
+        # Create zero matrices for L and U
+        L = [[0.0] * n for i in xrange(n)]
+        U = [[0.0] * n for i in xrange(n)]
+
+        # Create the pivot matrix P and the multipled matrix PA
+        P = pivot_matrix(matrix)
+        PA = mult_matrix(P, matrix)
+
+        # Perform the LU Decomposition
+        for j in xrange(n):
+            # All diagonal entries of L are set to unity
+            L[j][j] = 1.0
+
+            for i in xrange(j + 1):
+                s1 = sum(U[k][j] * L[i][k] for k in xrange(i))
+                U[i][j] = PA[i][j] - s1
+
+            for i in xrange(j, n):
+                s2 = sum(U[k][j] * L[i][k] for k in xrange(j))
+                L[i][j] = (PA[i][j] - s2) / U[j][j]
+
+        inversa = aux(L, U)
+
+        return inversa
 
     ###############################################
     # Requirement 02 - f)
